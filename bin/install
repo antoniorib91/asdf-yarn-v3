@@ -1,11 +1,61 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -o nounset -o pipefail -o errexit
+IFS=$'\t\n'
 
-current_script_path=${BASH_SOURCE[0]}
-plugin_dir=$(dirname "$(dirname "$current_script_path")")
+asdf_plugin_fail() {
+  >&2 echo "⛔ $*"
+  exit 1
+}
+
+asdf_download() {
+  if [ -x "$(which curl)" ]; then
+    asdf_yarn_download_curl
+  fi
+}
+
+asdf_download_curl() {
+  DOWNLOAD_URL="https://github.com/yarnpkg/berry/archive/refs/tags/@yarnpkg/cli/${ASDF_INSTALL_VERSION}"
+  curl -sSL -o "v${ASDF_INSTALL_VERSION}.tar.gz" "${DOWNLOAD_URL}.tar.gz"
+}
+
+
+asdf_install_plugin() {
+  local ASDF_PLUGIN_DIR="$(mktemp -d -t asdf-yarn-v3)"
+
+  (
+    cd "${ASDF_PLUGIN_DIR}"
+
+    asdf_download
+
+    # Extract archive
+    tar xzf "v${ASDF_INSTALL_VERSION}.tar.gz" --strip-components=1 --no-same-owner
+
+    # Remove downloaded files
+    rm -f "v${ASDF_INSTALL_VERSION}.tar.gz"
+  )
+
+  if [ -d "${ASDF_INSTALL_PATH}" ]; then
+    # Remove existing install directory
+    rm -fR "${ASDF_INSTALL_PATH}"
+  fi
+
+  # Create parent directory, if necessary
+  mkdir -p "$(dirname "${ASDF_INSTALL_PATH}")"
+
+  # Finish the installation
+  mv "${ASDF_PLUGIN_DIR}" "${ASDF_INSTALL_PATH}"
+}
+
+[ "${ASDF_INSTALL_TYPE}" == 'ref' ] && asdf_plugin_fail "This plugin does not support installing by ref."
+[ -z "${ASDF_INSTALL_VERSION}" ] && asdf_plugin_fail "Unspecified install version."
+[ -z "${ASDF_INSTALL_PATH}" ] && asdf_plugin_fail "No installation directory was provided. Are you running this command via asdf? Try running 'asdf install yarn <version>'"
+[ -x "$(which curl)" ] || asdf_plugin_fail "Missing the following dependencies: curl"
+[ -x "$(which tar)" -a -x "$(which gpg)" ] || asdf_plugin_fail "Missing one or more of the following dependencies: tar, gpg"
 
 # shellcheck source=../lib/utils.bash
-source "${plugin_dir}/lib/utils.bash"
+# source "${plugin_dir}/lib/utils.bash"
 
-install_version "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
+# install_version "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
+
+asdf_install_plugin $*
