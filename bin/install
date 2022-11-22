@@ -4,7 +4,7 @@ set -o nounset -o pipefail -o errexit
 IFS=$'\t\n'
 
 asdf_plugin_fail() {
-  >&2 echo "⛔ $*"
+  echo >&2 "⛔ $*"
   exit 1
 }
 
@@ -18,7 +18,6 @@ asdf_download_curl() {
   DOWNLOAD_URL="https://github.com/yarnpkg/berry/archive/refs/tags/@yarnpkg/cli/${ASDF_INSTALL_VERSION}"
   curl -sSL -o "v${ASDF_INSTALL_VERSION}.tar.gz" "${DOWNLOAD_URL}.tar.gz"
 }
-
 
 asdf_install_plugin() {
   local ASDF_PLUGIN_DIR="$(mktemp -d -t asdf-yarn-v3)"
