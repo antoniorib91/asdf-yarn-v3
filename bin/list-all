@@ -3,10 +3,11 @@
 set -o nounset -o pipefail -o errexit
 IFS=$'\t\n'
 
-git ls-remote --refs --tags "https://github.com/yarnpkg/berry.git" |
-sed -E 's|^.+refs/tags/||g' |
-grep -E '^v' |
-sort --version-sort |
-sed -E 's|^v||g' |
-grep -Ev '^0\.' |
+git ls-remote --refs --tags "https://github.com/yarnpkg/berry.git" | 
+sed -E 's|^.+refs/tags/||g'| 
+grep -E '/cli' | 
+sort --version-sort | 
+sed -E 's|^v||g' | 
+grep -v -e '-rc\.[0-9]\+$' | 
+sed -E 's|@yarnpkg/cli/||g'
 xargs
