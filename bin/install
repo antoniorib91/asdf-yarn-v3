@@ -15,8 +15,7 @@ asdf_download() {
 }
 
 asdf_download_curl() {
-  DOWNLOAD_URL="https://github.com/yarnpkg/berry/archive/refs/tags/@yarnpkg/cli/${ASDF_INSTALL_VERSION}"
-  curl -sSL -o "v${ASDF_INSTALL_VERSION}.tar.gz" "${DOWNLOAD_URL}.tar.gz"
+  curl -sSL -o "v${ASDF_INSTALL_VERSION}.tar.gz" "https://github.com/yarnpkg/berry/archive/refs/tags/@yarnpkg/cli/${ASDF_INSTALL_VERSION}.tar.gz"
 }
 
 asdf_install_plugin() {
