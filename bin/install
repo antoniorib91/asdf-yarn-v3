@@ -10,7 +10,7 @@ asdf_plugin_fail() {
 
 asdf_download() {
   if [ -x "$(which curl)" ]; then
-    asdf_yarn_download_curl
+    asdf_download_curl
   fi
 }
 
