@@ -19,7 +19,7 @@ asdf_download_curl() {
 }
 
 asdf_install_plugin() {
-  local ASDF_PLUGIN_DIR="$(mktemp -d -t asdf-yarn-berry)"
+  local ASDF_PLUGIN_DIR="$(mktemp -d -t asdf-yarn-berry-XXXXXXX)"
 
   (
     cd "${ASDF_PLUGIN_DIR}"
