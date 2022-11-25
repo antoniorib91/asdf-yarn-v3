@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -o nounset -o pipefail -o errexit
+set -euo pipefail o errexit
 IFS=$'\t\n'
 
 asdf_plugin_fail() {
@@ -19,7 +19,7 @@ asdf_download_curl() {
 }
 
 asdf_install_plugin() {
-  local ASDF_PLUGIN_DIR="$(mktemp -d -t asdf-yarn-v3)"
+  local ASDF_PLUGIN_DIR="$(mktemp -d -t asdf-yarn-berry)"
 
   (
     cd "${ASDF_PLUGIN_DIR}"
